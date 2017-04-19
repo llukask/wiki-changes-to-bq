@@ -9,6 +9,7 @@ const pubsub = require('@google-cloud/pubsub')({
 const bigquery = require('@google-cloud/bigquery')({
   projectId: PROJECT_ID
 });
+const winston = require("winston");
 const logger = new winston.Logger({
   transports: [
     new (winston.transports.Console)({
@@ -24,7 +25,7 @@ const logger = new winston.Logger({
   ]
 });
 
-const topic = pubsub.topic(topicName);
+const topic = pubsub.topic(TOPIC_NAME);
 
 const wikiDs = bigquery.dataset(DATASET);
 const editT = wikiDs.table(TABLE);
