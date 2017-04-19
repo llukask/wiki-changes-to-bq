@@ -8,8 +8,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@google-cloud/bigquery": "^0.9.3",
     "@google-cloud/pubsub": "^0.10.0",
-    "@google-cloud/bigquery": "^0.9.3"
+    "winston": "^2.3.1"
   },
   "author": "",
   "license": "ISC"

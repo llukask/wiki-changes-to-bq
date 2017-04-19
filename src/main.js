@@ -1,53 +1,57 @@
-const projectId = "tweeting-164909";
+const PROJECT_ID = "tweeting-164909";
+const TOPIC_NAME = "wiki-changes-2";
+const DATASET = "wiki_changes";
+const TABLE = "edits2";
 
-const PubSub = require('@google-cloud/pubsub');
+const pubsub = require('@google-cloud/pubsub')({
+  projectId: PROJECT_ID
+});
 const bigquery = require('@google-cloud/bigquery')({
-  projectId: projectId
+  projectId: PROJECT_ID
 });
-const pubsubClient = PubSub({
-  projectId: projectId
+const logger = new winston.Logger({
+  transports: [
+    new (winston.transports.Console)({
+      timestamp: function() {
+        return Date.now();
+      },
+      formatter: function(options) {
+        // Return string will be passed to logger.
+        return (new Date(options.timestamp()).toISOString()) +' '+ options.level.toUpperCase() +' '+ (options.message ? options.message : '') +
+          (options.meta && Object.keys(options.meta).length ? '\n\t'+ JSON.stringify(options.meta) : '' );
+      }
+    })
+  ]
 });
 
+const topic = pubsub.topic(topicName);
 
-const topicName = 'wiki-changes';
-const topic = pubsubClient.topic(topicName);
-
-const wikiDs = bigquery.dataset('wiki_changes');
-const editT = wikiDs.table('edits');
+const wikiDs = bigquery.dataset(DATASET);
+const editT = wikiDs.table(TABLE);
 
 topic.subscribe((err, subscription, apiRes) => {
   if(err) {
-    console.error(err);
+    logger.error(err);
   } else {
     let batch = [];
     subscription.on("message", (msg) => {
-      //console.log(msg.data);
       if(msg) {
         batch.push(msg.data);
       }
-      /*editT.insert(msg.data, (err, api) => {
-        if(err) {
-          console.log(e);
-          if(e.errors) {
-            console.log(e.errors);
-            console.log(msg.data);
-          }
-        }
-      });*/
     });
     setInterval(() => {
       if(batch.length === 0) {
-        console.log("Got no entries!")
+        logger.info("Got no entries!")
           return;
       }
-      console.log("Inserting " + batch.length + " items into BigQuery!");
+      logger.info("Inserting " + batch.length + " items into BigQuery!");
       editT.insert(batch, (err, api) => {
         if(err) {
-          console.log(err);
+          logger.error(err);
           if(err.errors) {
-            console.log(err.errors);
+            logger.error(err.errors);
           }
-          console.log(batch);
+          logger.error(batch);
         }
         batch = [];
       });
