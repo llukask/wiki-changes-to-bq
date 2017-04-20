@@ -37,7 +37,7 @@ winston.info("Writing to BQ Table " + PROJECT_ID + ":" + DATASET + ":" + TABLE);
 
 winston.info("Insert interval is " + (INSERT_INTERVAL / 1000) + "s");
 
-topic.subscribe((err, subscription, apiRes) => {
+topic.subscribe('to-bq', {autoAck: true}, (err, subscription, apiRes) => {
   if(err) {
     logger.error(err);
   } else {
