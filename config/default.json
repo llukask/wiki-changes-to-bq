@@ -2,6 +2,6 @@
     "projectId": "tweeting-164909",
     "topicName": "wiki-changes-2",
     "dataset": "wiki_changes",
-    "table": "edits2",
+    "table": "edits4",
     "insertInterval": 3000
 }
