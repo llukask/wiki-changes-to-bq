@@ -1,7 +1,9 @@
-const PROJECT_ID = "tweeting-164909";
-const TOPIC_NAME = "wiki-changes-2";
-const DATASET = "wiki_changes";
-const TABLE = "edits2";
+const config = require('config');
+
+const PROJECT_ID = config.get("projectId");
+const TOPIC_NAME = config.get("topicName");
+const DATASET = config.get("dataset");
+const TABLE = config.get("table");
 
 const pubsub = require('@google-cloud/pubsub')({
   projectId: PROJECT_ID
