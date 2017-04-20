@@ -4,6 +4,7 @@ const PROJECT_ID = config.get("projectId");
 const TOPIC_NAME = config.get("topicName");
 const DATASET = config.get("dataset");
 const TABLE = config.get("table");
+const INSERT_INTERVAL = config.get("insertInterval");
 
 const pubsub = require('@google-cloud/pubsub')({
   projectId: PROJECT_ID
@@ -28,9 +29,13 @@ const logger = new winston.Logger({
 });
 
 const topic = pubsub.topic(TOPIC_NAME);
+winston.info("Reading from Pub/Sub topic " + TOPIC_NAME);
 
 const wikiDs = bigquery.dataset(DATASET);
 const editT = wikiDs.table(TABLE);
+winston.info("Writing to BQ Table " + PROJECT_ID + ":" + DATASET + ":" + TABLE);
+
+winston.info("Insert interval is " + (INSERT_INTERVAL / 1000) + "s");
 
 topic.subscribe((err, subscription, apiRes) => {
   if(err) {
@@ -44,8 +49,8 @@ topic.subscribe((err, subscription, apiRes) => {
     });
     setInterval(() => {
       if(batch.length === 0) {
-        logger.info("Got no entries!")
-          return;
+        logger.info("Got no events!");
+        return;
       }
       logger.info("Inserting " + batch.length + " items into BigQuery!");
       editT.insert(batch, (err, api) => {
@@ -57,6 +62,6 @@ topic.subscribe((err, subscription, apiRes) => {
         }
       });
       batch = [];
-    }, 10000);
+    }, INSERT_INTERVAL);
   }
 });

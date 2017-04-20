@@ -2,5 +2,6 @@
     "projectId": "PROJECT_ID",
     "topicName": "TOPIC_NAME",
     "dataset": "DATASET",
-    "table": "TABLE"
+    "table": "TABLE",
+    "insertInterval": "INSERT_INTERVAL"
 }
