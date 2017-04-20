@@ -52,10 +52,9 @@ topic.subscribe((err, subscription, apiRes) => {
           if(err.errors) {
             logger.error(err.errors);
           }
-          logger.error(batch);
         }
-        batch = [];
       });
+      batch = [];
     }, 10000);
   }
 });
